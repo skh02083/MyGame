@@ -1,3 +1,0 @@
-﻿ID,Character,Question,Answer1,Money1,Approval1,Power1,North1,USA1,China1,Japan1,OtherNation1,Economy1,Army1,Moral1,News1,Next1,Answer2,Money2,Approval2,Power2,North2,USA2,China2,Japan2,OtherNation2,Economy2,Army2,Moral2,News2,Next2
-G1,시민대표,○○지역의 개발 제한을 해제해 주세요,예,0,2,0,0,0,0,0,0,2,0,0,null,G2,아니오,0,0,0,0,0,0,0,0,0,0,0,null,null
-G2,환경부장관,안됩니다! 그 지역은 천연 기념물들의 서식지 입니다!,그대로 진행하세요,0,0,-1,0,0,0,0,0,0,0,-2,null,null,개발 제한을 유지합시다.,0,0,0,0,0,0,0,0,0,0,0,null,null

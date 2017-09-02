@@ -15,12 +15,21 @@ public class GameController : MonoBehaviour {
     public Text Diplomacy;
     public Button Answer1, Answer2;
     public Text ShowCharacter;
+    public Text Newspaper;
+    public Text Timer;
 
     public int ScenarioNum = 0;
 
     // Use this for initialization
     void Start () {
 		UpdateStat ();
+
+        DataController.Instance.Init();
+
+        DataController.Instance.LoadScenario("GameNormalQuestion");
+        DataController.Instance.LoadScenario("GameSpecialQuestion");
+        Debug.Log("Load Done");
+
         LoadQuestion (0, ref ScenarioNum);
     }
 	
@@ -28,7 +37,7 @@ public class GameController : MonoBehaviour {
     
     // Update is called once per frame
 	void Update () {
-        //LoadNormalQuestion();
+
     }
 
 
@@ -89,31 +98,56 @@ public class GameController : MonoBehaviour {
         Opinion.text = OpinionFunction();
         Congress.text = CongressFunction();
         Diplomacy.text = DiplomacyFunction();
+        //DebugFunction();
     }
 
-    
+    void DebugFunction()
+    {
+        string MoneyDebug = DataController.Instance.Money.ToString();
+        string ApprovalDebug = DataController.Instance.Approval.ToString();
+        string PowerDebug = DataController.Instance.Power.ToString();
+        string NorthDebug = DataController.Instance.North.ToString();
+        string USADebug = DataController.Instance.USA.ToString();
+        string ChinaDebug = DataController.Instance.China.ToString();
+        string JapanDebug = DataController.Instance.Japan.ToString();
+        string OtherNationDebug = DataController.Instance.OtherNation.ToString();
+        string EconomyDebug = DataController.Instance.Economy.ToString();
+        string ArmyDebug = DataController.Instance.Army.ToString();
+        string MoralDebug = DataController.Instance.Moral.ToString();
+
+        string DebugString = "Money=" + MoneyDebug + " Approval=" + ApprovalDebug 
+            + " Power=" + PowerDebug + " North=" + NorthDebug + " USA=" + USADebug 
+            + " China=" + ChinaDebug + " Japan=" + JapanDebug + " OtherNation=" + OtherNationDebug 
+            + " Economy" + EconomyDebug + " Army" + ArmyDebug + " Moral" + MoralDebug;
+        Debug.Log(DebugString);
+    }
     
     // Question 불러오기
     void LoadQuestion(int type, ref int ScenerioNum){
         List<ScenarioItem> list = DataController.Instance.GetGameScenario();
+        //Debug.Log(list.Count);
+
         if (type == 0) // 초기 타입, 버튼 선택 없음
         {
             DataController.Instance.CurrentScenarioItem = list[ScenarioNum];
-            ScenarioNum++;
+            //ScenarioNum++;
         }
 
-        if(type == 1) // answer1에 대하여
+        else if(type == 1) // answer1에 대하여
         {
-            if (list[ScenarioNum].Next1 == null)
+            if (list[ScenarioNum].Next1 == 0)
             {
-                DataController.Instance.CurrentScenarioItem = list[ScenarioNum];
+                Debug.Log("Type1, null "+ list[ScenarioNum].Next1);
                 ScenarioNum++;
+                DataController.Instance.CurrentScenarioItem = list[ScenarioNum];
+                
             } else
             {
-                string NextID = list[ScenarioNum].ID;
+                Debug.Log("Type1, !null "+ list[ScenarioNum].Next1);
+                int NextID = list[ScenarioNum].Next1;
                 int IDFinder = 0;
                 List<ScenarioItem> SpecialList = DataController.Instance.GetSpecialScenarioList();
-                for (int index = 0; index < SpecialList.Count - 1; index++)
+                for (int index = 0; index < SpecialList.Count; index++)
                 {
                     if (SpecialList[index].ID == NextID)
                     {
@@ -122,37 +156,42 @@ public class GameController : MonoBehaviour {
                     }
                 }
                 DataController.Instance.CurrentScenarioItem = SpecialList[IDFinder];
+                ScenarioNum++;
             }
         }
 
-        if(type == 2) // answer2에 대하여
+        else if(type == 2) // answer2에 대하여
         {
-            if (list[ScenarioNum].Next2 == null)
+            if (list[ScenarioNum].Next2 == 0)
             {
-                DataController.Instance.CurrentScenarioItem = list[ScenarioNum];
+                Debug.Log("Type2, null "+ list[ScenarioNum].Next2);
                 ScenarioNum++;
-            }
-            else
+                DataController.Instance.CurrentScenarioItem = list[ScenarioNum];
+                
+            } else
             {
-                string NextID = list[ScenarioNum].ID;
+                Debug.Log("Type2, !null " + list[ScenarioNum].Next2);
+                int NextID = list[ScenarioNum].Next2;
                 int IDFinder = 0;
                 List<ScenarioItem> SpecialList = DataController.Instance.GetSpecialScenarioList();
-                for (int index = 0; index < SpecialList.Count - 1; index++)
+                for (int index = 0; index < SpecialList.Count; index++)
                 {
+                    Debug.Log(SpecialList.Count);
                     if (SpecialList[index].ID == NextID)
                     {
                         IDFinder = index;
+                        //Debug.Log(IDFinder);
                         break;
                     }
                 }
                 DataController.Instance.CurrentScenarioItem = SpecialList[IDFinder];
+                ScenarioNum++;
             }
         }
         ShowCharacter.text = DataController.Instance.CurrentScenarioItem.Character;
         Question.text = DataController.Instance.CurrentScenarioItem.Question;
         AnswerText1.text = DataController.Instance.CurrentScenarioItem.Answer1;
         AnswerText2.text = DataController.Instance.CurrentScenarioItem.Answer2;
-        Debug.Log("1");
 	}
 
 
@@ -240,13 +279,6 @@ public class GameController : MonoBehaviour {
     }
 
 
-    /*
-    public void ShowNewspaper()
-    {
-        if (DataController.Instance.CurrentScenarioItem.ID[0] == 'N')
-        {
-
-        }
-    }
-    */
+    
+    
 }

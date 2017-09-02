@@ -357,6 +357,8 @@ MonoBehaviour:
   Answer1: {fileID: 1597627080}
   Answer2: {fileID: 221606731}
   ShowCharacter: {fileID: 1450744969}
+  Newspaper: {fileID: 0}
+  Timer: {fileID: 0}
   ScenarioNum: 0
 --- !u!224 &718582287
 RectTransform:

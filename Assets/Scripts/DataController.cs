@@ -47,8 +47,13 @@ public class DataController : MonoBehaviour {
     // 모든 시나리오 내용을 담기 위해 ScenarioItem 리스트 선언
     public List<ScenarioItem> NormalScenarioList;
     public List<ScenarioItem> SpecialScenarioList;
-    public List<ScenarioItem> GroupScenarioList;
+    
 
+
+    public void Init()
+    {
+        GameScenario = new List<ScenarioItem>();
+    }
 
 
     public ScenarioItem CurrentScenarioItem;
@@ -58,8 +63,7 @@ public class DataController : MonoBehaviour {
 		TextAsset scenarioText = Resources.Load ("Scenario/" + ScenarioFileName) as TextAsset;
         /*파일 종류
          * - GameNormalQuestion : 일반 질문
-         * - GameSpecialQuestion : 분기점 질문
-         * - GameGroupQuestion : 묶음 질문
+         * - GameSpecialQuestion : 특별 질문
          */
 
         // \n을 기준으로 문자열을 쪼갠다.
@@ -77,10 +81,6 @@ public class DataController : MonoBehaviour {
             SpecialScenarioList = new List<ScenarioItem>();
         }
 
-        if(ScenarioFileName == "GameGroupQuestion")
-        {
-            GroupScenarioList = new List<ScenarioItem>();
-        }
 
 
 		foreach (string line in list) {
@@ -95,14 +95,12 @@ public class DataController : MonoBehaviour {
 				continue;
             if (ScenarioFileName == "GameSpecialQuestion" && values.Length != 31)
                 continue;
-            if (ScenarioFileName == "GameGroupQuestion" && values.Length != 31)
-                continue;
 
             ScenarioItem Item = null;
             
             Item = new ScenarioItem();
 
-            Item.ID = values[0];
+            Item.ID = int.Parse(values[0]);
             Item.Character = values[1];
             Item.Question = values[2];
 
@@ -119,7 +117,7 @@ public class DataController : MonoBehaviour {
             Item.Army1 = int.Parse(values[13]);
             Item.Moral1 = int.Parse(values[14]);
             Item.News1 = values[15];
-            Item.Next1 = values[16];
+            Item.Next1 = int.Parse(values[16]);
 
             Item.Answer2 = values[17];
             Item.Money2 = int.Parse(values[18]);
@@ -134,24 +132,23 @@ public class DataController : MonoBehaviour {
             Item.Army2 = int.Parse(values[27]);
             Item.Moral2 = int.Parse(values[28]);
             Item.News2 = values[29];
-            Item.Next2 = values[30];
+            Item.Next2 = int.Parse(values[30]);
 
                 // 불러온 값을 시나리오리스트에 추가
                 
             if(ScenarioFileName == "GameNormalQuestion")
             {
                 NormalScenarioList.Add(Item);
+                
             }
 
             if (ScenarioFileName == "GameSpecialQuestion")
             {
                 SpecialScenarioList.Add(Item);
+                
             }
 
-            if(ScenarioFileName == "GameGroupQuestion")
-            {
-                GroupScenarioList.Add(Item);
-            }
+            //Debug.Log(line);
         }
     }
 	
@@ -175,19 +172,6 @@ public class DataController : MonoBehaviour {
         return SpecialScenarioList;
     }
 
-    public List<ScenarioItem> GetGroupScenarioList()
-    {
-        if (GroupScenarioList == null)
-        {
-            LoadScenario("GameGroupQuestion");
-        }
-
-        return GroupScenarioList;
-    }
-
-
-
-
 
     public List<ScenarioItem> GameScenario;
 
@@ -197,15 +181,11 @@ public class DataController : MonoBehaviour {
         {
             List<ScenarioItem> list = GetNormalScenarioList();
             int idx = Random.Range(0, list.Count - 1);
-            if(list[idx] == null)
-            {
-                Debug.Log("Empty");
-            }
             GameScenario.Add(list[idx]);
         }
     }
 
-    public void SpecialFinder(string QuestionID)
+    public void SpecialFinder(int QuestionID)
     {
         int IDFinder = 0;
         for (int index = 0; index < SpecialScenarioList.Count - 1; index++)
@@ -217,37 +197,22 @@ public class DataController : MonoBehaviour {
             }
         }
         GameScenario.Add(SpecialScenarioList[IDFinder]);
+        //Debug.Log(SpecialScenarioList[IDFinder].Question);
     }
 
-    public void GroupFinder(string QuestionID)
-    {
-        int IDFinder = 0;
-        for (int index = 0; index < GroupScenarioList.Count - 1; index++)
-        {
-            if (GroupScenarioList[index].ID == QuestionID)
-            {
-                IDFinder = index;
-                break;
-            }
-        }
-        GameScenario.Add(GroupScenarioList[IDFinder]);
-    }
 
     public List<ScenarioItem> GetGameScenario()
     {
-        if(GameScenario == null)
-        {
-            NormalRandom(10);
-        }
+        NormalRandom(5);
+        SpecialFinder(1);
+        NormalRandom(5);
+        SpecialFinder(4);
         return GameScenario;
     }
 
     void Start(){
-		LoadScenario ("GameNormalQuestion");
-        LoadScenario("GameSpecialQuestion");
-        LoadScenario("GameGroupQuestion");
-        Debug.Log("Load Done");
-        GetGameScenario();
+
+        //GetGameScenario();
         Debug.Log("Scenario Done");
     }
 

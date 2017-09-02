@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class ScenarioItem {
 
-    public string ID;
+    public int ID;
     public string Character;
     public string Question;
 
@@ -20,7 +20,7 @@ public class ScenarioItem {
     public int Army1;
     public int Moral1;
     public string News1;
-    public string Next1;
+    public int Next1;
 
 
     public string Answer2;
@@ -36,6 +36,6 @@ public class ScenarioItem {
     public int Army2;
     public int Moral2;
     public string News2;
-    public string Next2;
+    public int Next2;
 
 }
