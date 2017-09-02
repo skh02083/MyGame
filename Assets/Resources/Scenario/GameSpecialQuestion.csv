@@ -1,0 +1,4 @@
+﻿ID,Character,Question,Answer1,Money1,Approval1,Power1,North1,USA1,China1,Japan1,OtherNation1,Economy1,Army1,Moral1,News1,Next1,Answer2,Money2,Approval2,Power2,North2,USA2,China2,Japan2,OtherNation2,Economy2,Army2,Moral2,News2,Next2
+S1,보건복지부 장관,중동에서 치명적인 질병이 확산되고 있다는 소식입니다. 어떻게 할까요?,검역을 강화하세요,-3,0,0,0,0,0,0,-3,0,0,1,null,S2,아직 국내 감염 사례는 없으니 다음에 논의합시다.,0,0,0,0,0,0,0,0,0,0,-2,null,S3
+S2,  ,전 세계에 중동 질병이 확산되었지만 조기에 대응한 덕분에 대한민국은 안전했다.,다음,0,0,0,0,0,0,0,0,0,0,0,null,null,다음,0,0,0,0,0,0,0,0,0,0,0,null,null
+S3,보건복지부 장관,국내에 중동 질병 환자가 대량으로 발생했습니다! ,뭐라고요?,-10,-10,-10,0,0,0,0,0,-10,-10,-3,null,null,뭐라고요?,-10,-10,-10,0,0,0,0,0,-10,-10,-3,null,null
