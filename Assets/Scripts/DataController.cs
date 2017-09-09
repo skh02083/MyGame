@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class DataController : MonoBehaviour {
 
@@ -27,22 +28,19 @@ public class DataController : MonoBehaviour {
 	}
     // Singleton class end
 
-
-
-    // 초기값 설정
-    public int Money = 50;
-	public int Approval = 50;
-	public int Power = 50;
-    public int North = 50;
-    public int USA = 50;
-    public int China = 50;
-    public int Japan = 50;
-    public int OtherNation = 50;
-    public int Economy = 50;
-	public int Army = 50;
-	public int Moral = 50;
-
-
+    // 세이브 파일 로드
+    GameData _gameData;
+    public GameData gameData
+    {
+        get
+        {
+            if (_gameData == null)
+            {
+                LoadGameData();
+            }
+            return _gameData;
+        }
+    }
 
     // 모든 시나리오 내용을 담기 위해 ScenarioItem 리스트 선언
     public List<ScenarioItem> NormalScenarioList;
@@ -217,4 +215,39 @@ public class DataController : MonoBehaviour {
         Debug.Log("Scenario Done");
     }
 
+
+    
+
+    public string gameDataProjectFilePath = "/game.json";
+
+    public void LoadGameData()
+    {
+        string filePath = Application.persistentDataPath + gameDataProjectFilePath;
+
+        if (File.Exists(filePath))
+        {
+            Debug.Log("loaded!");
+            string dataAsJson = File.ReadAllText(filePath);
+            _gameData = JsonUtility.FromJson<GameData>(dataAsJson);
+        }
+        else
+        {
+            Debug.Log("Create new");
+
+            _gameData = new GameData();
+            //_gameData.CollectGoldLevel = 1;
+            
+
+        }
+    }
+
+    public void SaveGameData()
+    {
+
+        string dataAsJson = JsonUtility.ToJson(gameData);
+
+        string filePath = Application.persistentDataPath + gameDataProjectFilePath;
+        File.WriteAllText(filePath, dataAsJson);
+
+    }
 }
