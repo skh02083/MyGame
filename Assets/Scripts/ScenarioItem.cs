@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class ScenarioItem {
 
     public int ID;
+    public string Type;
     public string Character;
     public string Question;
 

@@ -98,7 +98,7 @@ public class GameController : MonoBehaviour {
         Opinion.text = OpinionFunction();
         Congress.text = CongressFunction();
         Diplomacy.text = DiplomacyFunction();
-        //DebugFunction();
+        DebugFunction();
     }
 
     void DebugFunction()
@@ -137,13 +137,13 @@ public class GameController : MonoBehaviour {
         {
             if (list[ScenarioNum].Next1 == 0)
             {
-                Debug.Log("Type1, null "+ list[ScenarioNum].Next1);
+                //Debug.Log("Type1, null "+ list[ScenarioNum].Next1);
                 ScenarioNum++;
                 DataController.Instance.CurrentScenarioItem = list[ScenarioNum];
                 
             } else
             {
-                Debug.Log("Type1, !null "+ list[ScenarioNum].Next1);
+                //Debug.Log("Type1, !null "+ list[ScenarioNum].Next1);
                 int NextID = list[ScenarioNum].Next1;
                 int IDFinder = 0;
                 List<ScenarioItem> SpecialList = DataController.Instance.GetSpecialScenarioList();
@@ -164,13 +164,13 @@ public class GameController : MonoBehaviour {
         {
             if (list[ScenarioNum].Next2 == 0)
             {
-                Debug.Log("Type2, null "+ list[ScenarioNum].Next2);
+                //Debug.Log("Type2, null "+ list[ScenarioNum].Next2);
                 ScenarioNum++;
                 DataController.Instance.CurrentScenarioItem = list[ScenarioNum];
                 
             } else
             {
-                Debug.Log("Type2, !null " + list[ScenarioNum].Next2);
+                //Debug.Log("Type2, !null " + list[ScenarioNum].Next2);
                 int NextID = list[ScenarioNum].Next2;
                 int IDFinder = 0;
                 List<ScenarioItem> SpecialList = DataController.Instance.GetSpecialScenarioList();
@@ -243,6 +243,7 @@ public class GameController : MonoBehaviour {
         ValueRange(ref DataController.Instance.Moral);
 
         UpdateStat ();
+        ShowNewspaper(1);
         LoadQuestion(1, ref ScenarioNum);
     }
 
@@ -275,10 +276,29 @@ public class GameController : MonoBehaviour {
         ValueRange(ref DataController.Instance.Moral);
 
         UpdateStat();
+        ShowNewspaper(2);
         LoadQuestion(2, ref ScenarioNum);
     }
 
-
+    public void ShowNewspaper(int type)
+    {
+        string QuestionType = DataController.Instance.CurrentScenarioItem.Type;
+        string Newspaper1 = DataController.Instance.CurrentScenarioItem.News1;
+        string Newspaper2 = DataController.Instance.CurrentScenarioItem.News2;
+        if (type == 1)
+        {
+            if(Newspaper1 != "null")
+            {
+                Newspaper.text = "[속보]" + Newspaper1;
+            }
+        } else if (type == 2)
+        {
+            if (Newspaper2 != "null")
+            {
+                Newspaper.text = "[속보]" + Newspaper2;
+            }
+        }
+    }
     
     
 }

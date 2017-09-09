@@ -91,9 +91,9 @@ public class DataController : MonoBehaviour {
 			string[] values = line.Split (',');
             
             // 자료수 검사
-            if (ScenarioFileName == "GameNormalQuestion" && values.Length != 31)
+            if (ScenarioFileName == "GameNormalQuestion" && values.Length != 32)
 				continue;
-            if (ScenarioFileName == "GameSpecialQuestion" && values.Length != 31)
+            if (ScenarioFileName == "GameSpecialQuestion" && values.Length != 32)
                 continue;
 
             ScenarioItem Item = null;
@@ -101,38 +101,39 @@ public class DataController : MonoBehaviour {
             Item = new ScenarioItem();
 
             Item.ID = int.Parse(values[0]);
-            Item.Character = values[1];
-            Item.Question = values[2];
+            Item.Type = values[1];
+            Item.Character = values[2];
+            Item.Question = values[3];
 
-            Item.Answer1 = values[3];
-            Item.Money1 = int.Parse(values[4]);
-            Item.Approval1 = int.Parse(values[5]);
-            Item.Power1 = int.Parse(values[6]);
-            Item.North1 = int.Parse(values[7]);
-            Item.USA1 = int.Parse(values[8]);
-            Item.China1 = int.Parse(values[9]);
-            Item.Japan1 = int.Parse(values[10]);
-            Item.OtherNation1 = int.Parse(values[11]);
-            Item.Economy1 = int.Parse(values[12]);
-            Item.Army1 = int.Parse(values[13]);
-            Item.Moral1 = int.Parse(values[14]);
-            Item.News1 = values[15];
-            Item.Next1 = int.Parse(values[16]);
+            Item.Answer1 = values[4];
+            Item.Money1 = int.Parse(values[5]);
+            Item.Approval1 = int.Parse(values[6]);
+            Item.Power1 = int.Parse(values[7]);
+            Item.North1 = int.Parse(values[8]);
+            Item.USA1 = int.Parse(values[9]);
+            Item.China1 = int.Parse(values[10]);
+            Item.Japan1 = int.Parse(values[11]);
+            Item.OtherNation1 = int.Parse(values[12]);
+            Item.Economy1 = int.Parse(values[13]);
+            Item.Army1 = int.Parse(values[14]);
+            Item.Moral1 = int.Parse(values[15]);
+            Item.News1 = values[16];
+            Item.Next1 = int.Parse(values[17]);
 
-            Item.Answer2 = values[17];
-            Item.Money2 = int.Parse(values[18]);
-            Item.Approval2 = int.Parse(values[19]);
-            Item.Power2 = int.Parse(values[20]);
-            Item.North2 = int.Parse(values[21]);
-            Item.USA2 = int.Parse(values[22]);
-            Item.China2 = int.Parse(values[23]);
-            Item.Japan2 = int.Parse(values[24]);
-            Item.OtherNation2 = int.Parse(values[25]);
-            Item.Economy2 = int.Parse(values[26]);
-            Item.Army2 = int.Parse(values[27]);
-            Item.Moral2 = int.Parse(values[28]);
-            Item.News2 = values[29];
-            Item.Next2 = int.Parse(values[30]);
+            Item.Answer2 = values[18];
+            Item.Money2 = int.Parse(values[19]);
+            Item.Approval2 = int.Parse(values[20]);
+            Item.Power2 = int.Parse(values[21]);
+            Item.North2 = int.Parse(values[22]);
+            Item.USA2 = int.Parse(values[23]);
+            Item.China2 = int.Parse(values[24]);
+            Item.Japan2 = int.Parse(values[25]);
+            Item.OtherNation2 = int.Parse(values[26]);
+            Item.Economy2 = int.Parse(values[27]);
+            Item.Army2 = int.Parse(values[28]);
+            Item.Moral2 = int.Parse(values[29]);
+            Item.News2 = values[30];
+            Item.Next2 = int.Parse(values[31]);
 
                 // 불러온 값을 시나리오리스트에 추가
                 
