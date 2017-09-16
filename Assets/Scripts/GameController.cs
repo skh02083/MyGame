@@ -21,15 +21,14 @@ public class GameController : MonoBehaviour {
     
 
     // Use this for initialization
-    void Start () {
+    IEnumerator Start () {
 		UpdateStat ();
 
-        DataController.Instance.Init();
-
-        DataController.Instance.LoadScenario("GameNormalQuestion");
-        DataController.Instance.LoadScenario("GameSpecialQuestion");
         Debug.Log("Load Done");
-
+        while (DataController.Instance.gameData == null || DataController.Instance.MetaDataLoaded == false) {
+            yield return new WaitForSecondsRealtime(0.1f);
+        }
+        
         LoadQuestion (0, ref DataController.Instance.gameData.ScenarioNum);
     }
 	
@@ -129,10 +128,15 @@ public class GameController : MonoBehaviour {
     // Question 불러오기
     void LoadQuestion(int type, ref int ScenerioNum){
         List<ScenarioItem> list = DataController.Instance.GetGameScenario();
-        //Debug.Log(list.Count);
+        Debug.Log(list.Count);
+        if(DataController.Instance.gameData.ScenarioNum > list.Count)
+        {
+            DataController.Instance.gameData.ScenarioNum = 0;
+        }
 
         if (type == 0) // 초기 타입, 버튼 선택 없음
         {
+            Debug.Log(DataController.Instance.gameData.ScenarioNum);
             DataController.Instance.CurrentScenarioItem = list[DataController.Instance.gameData.ScenarioNum];
             //ScenarioNum++;
         }

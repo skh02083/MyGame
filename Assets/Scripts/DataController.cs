@@ -21,6 +21,7 @@ public class DataController : MonoBehaviour {
 				_container.name = "DataController";
 				_instance = _container.AddComponent( typeof(DataController) ) as DataController;
 				DontDestroyOnLoad (_container);
+                _instance.Init();
 			}
 
 			return _instance;
@@ -46,11 +47,17 @@ public class DataController : MonoBehaviour {
     public List<ScenarioItem> NormalScenarioList;
     public List<ScenarioItem> SpecialScenarioList;
     
+    public bool MetaDataLoaded = false;
 
 
     public void Init()
     {
         GameScenario = new List<ScenarioItem>();
+
+        LoadScenario("GameNormalQuestion");
+        LoadScenario("GameSpecialQuestion");
+
+        MetaDataLoaded = true;
     }
 
 
