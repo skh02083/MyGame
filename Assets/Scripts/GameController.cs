@@ -2,20 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Purchasing;
+using UnityEngine.Advertisements;
 
 public class GameController : MonoBehaviour {
+
+#if UNITY_IOS
+	private string gameId = "1547779";
+#elif UNITY_ANDROID
+    private string gameId = "1547778";
+#endif
 
     public Text Question;
     public Text AnswerText1;
     public Text AnswerText2;
-    public Text News;
-    public Text MoneyStatus;
-    public Text Opinion;
-    public Text Congress;
-    public Text Diplomacy;
+    public Text ApprovalText;
+    public Text WelfareText;
+    public Text EconomyText;
+    public Text DiplomacyText;
+    public Text ArmyText;
     public Button Answer1, Answer2;
     public Text ShowCharacter;
-    public Text Newspaper;
     public Text Timer;
 
     
@@ -27,78 +34,32 @@ public class GameController : MonoBehaviour {
         Debug.Log("Load Done");
         while (DataController.Instance.gameData == null || DataController.Instance.MetaDataLoaded == false) {
             yield return new WaitForSecondsRealtime(0.1f);
-        }
+        } // metaData가 로드 되기 전까지 대기한다. 
         
         LoadQuestion (0, ref DataController.Instance.gameData.ScenarioNum);
+
+        if (Advertisement.isSupported)
+        {
+            Advertisement.Initialize(gameId);
+        }
     }
 	
 	
     
     // Update is called once per frame
 	void Update () {
-
+        if (Input.GetKeyDown(KeyCode.Escape))
+            ShowRewardedVideo();
+            Application.Quit();
     }
 
-
-    string OpinionFunction()
-    {
-        if(DataController.Instance.gameData.Approval < 30)
-        {
-            return "Bad";
-        } else if(DataController.Instance.gameData.Approval >= 30 && DataController.Instance.gameData.Approval < 70)
-        {
-            return "Normal";
-        } else
-        {
-            return "good";
-        }
-
-    }
-
-    string CongressFunction()
-    {
-        if (DataController.Instance.gameData.Power < 30)
-        {
-            return "Bad";
-        }
-        else if (DataController.Instance.gameData.Power >= 30 && DataController.Instance.gameData.Power < 70)
-        {
-            return "Normal";
-        }
-        else
-        {
-            return "good";
-        }
-    }
-    
-
-    string DiplomacyFunction()
-    {
-        float DiploScore = (DataController.Instance.gameData.North 
-            + DataController.Instance.gameData.USA + DataController.Instance.gameData.China 
-            + DataController.Instance.gameData.Japan + DataController.Instance.gameData.OtherNation) / 5;
-
-        if (DiploScore < 30f)
-        {
-            return "Bad";
-        }
-        else if (DiploScore >= 30f && DiploScore < 70f)
-        {
-            return "Normal";
-        }
-        else
-        {
-            return "good";
-        }
-    }
-    
-    
     // 화면의 텍스트에 표시되도록 연결
     void UpdateStat(){
-        MoneyStatus.text = DataController.Instance.gameData.Money.ToString();
-        Opinion.text = OpinionFunction();
-        Congress.text = CongressFunction();
-        Diplomacy.text = DiplomacyFunction();
+        ApprovalText.text = DataController.Instance.gameData.Approval.ToString();
+        WelfareText.text = DataController.Instance.gameData.Welfare.ToString();
+        DiplomacyText.text = DataController.Instance.gameData.Diplomacy.ToString();
+        EconomyText.text = DataController.Instance.gameData.Economy.ToString();
+        ArmyText.text = DataController.Instance.gameData.Army.ToString();
         Timer.text = DataController.Instance.gameData.ScenarioNum.ToString();
         DebugFunction();
         DataController.Instance.SaveGameData();
@@ -106,29 +67,23 @@ public class GameController : MonoBehaviour {
 
     void DebugFunction()
     {
-        string MoneyDebug = DataController.Instance.gameData.Money.ToString();
         string ApprovalDebug = DataController.Instance.gameData.Approval.ToString();
-        string PowerDebug = DataController.Instance.gameData.Power.ToString();
-        string NorthDebug = DataController.Instance.gameData.North.ToString();
-        string USADebug = DataController.Instance.gameData.USA.ToString();
-        string ChinaDebug = DataController.Instance.gameData.China.ToString();
-        string JapanDebug = DataController.Instance.gameData.Japan.ToString();
-        string OtherNationDebug = DataController.Instance.gameData.OtherNation.ToString();
+        string WelfareDebug = DataController.Instance.gameData.Welfare.ToString();
         string EconomyDebug = DataController.Instance.gameData.Economy.ToString();
+        string DiplomacyDebug = DataController.Instance.gameData.Diplomacy.ToString();
         string ArmyDebug = DataController.Instance.gameData.Army.ToString();
         string MoralDebug = DataController.Instance.gameData.Moral.ToString();
+        string PowerDebug = DataController.Instance.gameData.Power.ToString();
 
-        string DebugString = "Money=" + MoneyDebug + " Approval=" + ApprovalDebug 
-            + " Power=" + PowerDebug + " North=" + NorthDebug + " USA=" + USADebug 
-            + " China=" + ChinaDebug + " Japan=" + JapanDebug + " OtherNation=" + OtherNationDebug 
-            + " Economy" + EconomyDebug + " Army" + ArmyDebug + " Moral" + MoralDebug;
+        string DebugString = " Approval=" + ApprovalDebug 
+            + " Welfare=" + WelfareDebug + " Economy=" + EconomyDebug + "Diplomacy=" + DiplomacyDebug
+            + " Army=" + ArmyDebug + " Moral=" + MoralDebug + "Power=" + PowerDebug;
         Debug.Log(DebugString);
     }
     
     // Question 불러오기
     void LoadQuestion(int type, ref int ScenerioNum){
         List<ScenarioItem> list = DataController.Instance.GetGameScenario();
-        Debug.Log(list.Count);
         if(DataController.Instance.gameData.ScenarioNum > list.Count)
         {
             DataController.Instance.gameData.ScenarioNum = 0;
@@ -145,25 +100,14 @@ public class GameController : MonoBehaviour {
         {
             if (list[DataController.Instance.gameData.ScenarioNum].Next1 == 0)
             {
-                //Debug.Log("Type1, null "+ list[ScenarioNum].Next1);
                 DataController.Instance.gameData.ScenarioNum++;
                 DataController.Instance.CurrentScenarioItem = list[DataController.Instance.gameData.ScenarioNum];
                 
             } else
             {
-                //Debug.Log("Type1, !null "+ list[ScenarioNum].Next1);
                 int NextID = list[DataController.Instance.gameData.ScenarioNum].Next1;
-                int IDFinder = 0;
-                List<ScenarioItem> SpecialList = DataController.Instance.GetSpecialScenarioList();
-                for (int index = 0; index < SpecialList.Count; index++)
-                {
-                    if (SpecialList[index].ID == NextID)
-                    {
-                        IDFinder = index;
-                        break;
-                    }
-                }
-                DataController.Instance.CurrentScenarioItem = SpecialList[IDFinder];
+                Debug.Log(NextID);
+                DataController.Instance.CurrentScenarioItem = DataController.Instance.ScenarioDic[NextID];
                 DataController.Instance.gameData.ScenarioNum++;
             }
         }
@@ -172,27 +116,14 @@ public class GameController : MonoBehaviour {
         {
             if (list[DataController.Instance.gameData.ScenarioNum].Next2 == 0)
             {
-                //Debug.Log("Type2, null "+ list[ScenarioNum].Next2);
                 DataController.Instance.gameData.ScenarioNum++;
                 DataController.Instance.CurrentScenarioItem = list[DataController.Instance.gameData.ScenarioNum];
                 
             } else
             {
-                //Debug.Log("Type2, !null " + list[ScenarioNum].Next2);
                 int NextID = list[DataController.Instance.gameData.ScenarioNum].Next2;
-                int IDFinder = 0;
-                List<ScenarioItem> SpecialList = DataController.Instance.GetSpecialScenarioList();
-                for (int index = 0; index < SpecialList.Count; index++)
-                {
-                    Debug.Log(SpecialList.Count);
-                    if (SpecialList[index].ID == NextID)
-                    {
-                        IDFinder = index;
-                        //Debug.Log(IDFinder);
-                        break;
-                    }
-                }
-                DataController.Instance.CurrentScenarioItem = SpecialList[IDFinder];
+                Debug.Log(NextID);
+                DataController.Instance.CurrentScenarioItem = DataController.Instance.ScenarioDic[NextID];
                 DataController.Instance.gameData.ScenarioNum++;
             }
         }
@@ -225,33 +156,23 @@ public class GameController : MonoBehaviour {
     
     // 버튼1이 눌렸을 때 기존의 수치에서 선택지 값에 해당하는 값 더하기 
     public void OnClickAnswer1(){
-        
-        DataController.Instance.gameData.Money += DataController.Instance.CurrentScenarioItem.Money1;
         DataController.Instance.gameData.Approval += DataController.Instance.CurrentScenarioItem.Approval1;
-		DataController.Instance.gameData.Power += DataController.Instance.CurrentScenarioItem.Power1;
-        DataController.Instance.gameData.North += DataController.Instance.CurrentScenarioItem.North1;
-        DataController.Instance.gameData.USA += DataController.Instance.CurrentScenarioItem.USA1;
-        DataController.Instance.gameData.China += DataController.Instance.CurrentScenarioItem.China1;
-        DataController.Instance.gameData.Japan += DataController.Instance.CurrentScenarioItem.Japan1;
-        DataController.Instance.gameData.OtherNation += DataController.Instance.CurrentScenarioItem.OtherNation1;
+		DataController.Instance.gameData.Welfare += DataController.Instance.CurrentScenarioItem.Welfare1;
         DataController.Instance.gameData.Economy += DataController.Instance.CurrentScenarioItem.Economy1;
+        DataController.Instance.gameData.Diplomacy += DataController.Instance.CurrentScenarioItem.Diplomacy1;
 		DataController.Instance.gameData.Army += DataController.Instance.CurrentScenarioItem.Army1;
 		DataController.Instance.gameData.Moral += DataController.Instance.CurrentScenarioItem.Moral1;
+        DataController.Instance.gameData.Power += DataController.Instance.CurrentScenarioItem.Power1;
 
-        ValueRange(ref DataController.Instance.gameData.Money);
+
         ValueRange(ref DataController.Instance.gameData.Approval);
-        ValueRange(ref DataController.Instance.gameData.Power);
-        ValueRange(ref DataController.Instance.gameData.North);
-        ValueRange(ref DataController.Instance.gameData.USA);
-        ValueRange(ref DataController.Instance.gameData.China);
-        ValueRange(ref DataController.Instance.gameData.Japan);
-        ValueRange(ref DataController.Instance.gameData.OtherNation);
+        ValueRange(ref DataController.Instance.gameData.Welfare);
         ValueRange(ref DataController.Instance.gameData.Economy);
         ValueRange(ref DataController.Instance.gameData.Army);
         ValueRange(ref DataController.Instance.gameData.Moral);
+        ValueRange(ref DataController.Instance.gameData.Power);
 
         UpdateStat ();
-        ShowNewspaper(1);
         LoadQuestion(1, ref DataController.Instance.gameData.ScenarioNum);
     }
 
@@ -259,54 +180,76 @@ public class GameController : MonoBehaviour {
     
     // 버튼2이 눌렸을 때 기존의 수치에서 선택지 값에 해당하는 값 더하기
     public void OnClickAnswer2(){
-		DataController.Instance.gameData.Money += DataController.Instance.CurrentScenarioItem.Money2;
 		DataController.Instance.gameData.Approval += DataController.Instance.CurrentScenarioItem.Approval2;
-		DataController.Instance.gameData.Power += DataController.Instance.CurrentScenarioItem.Power2;
-        DataController.Instance.gameData.North += DataController.Instance.CurrentScenarioItem.North2;
-        DataController.Instance.gameData.USA += DataController.Instance.CurrentScenarioItem.USA2;
-        DataController.Instance.gameData.China += DataController.Instance.CurrentScenarioItem.China2;
-        DataController.Instance.gameData.Japan += DataController.Instance.CurrentScenarioItem.Japan2;
-        DataController.Instance.gameData.OtherNation += DataController.Instance.CurrentScenarioItem.OtherNation2;
+		DataController.Instance.gameData.Welfare += DataController.Instance.CurrentScenarioItem.Welfare2;
         DataController.Instance.gameData.Economy += DataController.Instance.CurrentScenarioItem.Economy2;
-		DataController.Instance.gameData.Army += DataController.Instance.CurrentScenarioItem.Army2;
+        DataController.Instance.gameData.Diplomacy += DataController.Instance.CurrentScenarioItem.Diplomacy2;
+        DataController.Instance.gameData.Army += DataController.Instance.CurrentScenarioItem.Army2;
 		DataController.Instance.gameData.Moral += DataController.Instance.CurrentScenarioItem.Moral2;
+        DataController.Instance.gameData.Power += DataController.Instance.CurrentScenarioItem.Power2;
 
-        ValueRange(ref DataController.Instance.gameData.Money);
         ValueRange(ref DataController.Instance.gameData.Approval);
-        ValueRange(ref DataController.Instance.gameData.Power);
-        ValueRange(ref DataController.Instance.gameData.North);
-        ValueRange(ref DataController.Instance.gameData.USA);
-        ValueRange(ref DataController.Instance.gameData.China);
-        ValueRange(ref DataController.Instance.gameData.Japan);
-        ValueRange(ref DataController.Instance.gameData.OtherNation);
+        ValueRange(ref DataController.Instance.gameData.Welfare);
         ValueRange(ref DataController.Instance.gameData.Economy);
         ValueRange(ref DataController.Instance.gameData.Army);
         ValueRange(ref DataController.Instance.gameData.Moral);
+        ValueRange(ref DataController.Instance.gameData.Power);
 
         UpdateStat();
-        ShowNewspaper(2);
         LoadQuestion(2, ref DataController.Instance.gameData.ScenarioNum);
     }
 
-    public void ShowNewspaper(int type)
+
+    public void GameReset()
     {
-        string QuestionType = DataController.Instance.CurrentScenarioItem.Type;
-        string Newspaper1 = DataController.Instance.CurrentScenarioItem.News1;
-        string Newspaper2 = DataController.Instance.CurrentScenarioItem.News2;
-        if (type == 1)
+        DataController.Instance.gameData.ScenarioNum = 0;
+
+        DataController.Instance.gameData.Approval = 50;
+
+        DataController.Instance.gameData.Welfare = 50;
+
+        DataController.Instance.gameData.Economy = 50;
+
+        DataController.Instance.gameData.Diplomacy = 50;
+
+        DataController.Instance.gameData.Army = 50;
+
+        DataController.Instance.gameData.Moral = 50;
+
+        DataController.Instance.gameData.Power = 50;
+
+        UpdateStat();
+}
+
+    public void PurchaseComplete(Product p)
+    {
+        Debug.Log(p.metadata.localizedTitle + " purchase success!");
+    }
+
+    void ShowRewardedVideo()
+    {
+        var options = new ShowOptions();
+        options.resultCallback = HandleShowResult;
+
+        Advertisement.Show("rewardedVideo", options);
+    }
+
+    void HandleShowResult(ShowResult result)
+    {
+        if (result == ShowResult.Finished)
         {
-            if(Newspaper1 != "null")
-            {
-                Newspaper.text = "[속보]" + Newspaper1;
-            }
-        } else if (type == 2)
+            Debug.Log("Video completed - Offer a reward to the player");
+
+        }
+        else if (result == ShowResult.Skipped)
         {
-            if (Newspaper2 != "null")
-            {
-                Newspaper.text = "[속보]" + Newspaper2;
-            }
+            Debug.LogWarning("Video was skipped - Do NOT reward the player");
+
+        }
+        else if (result == ShowResult.Failed)
+        {
+            Debug.LogError("Video failed to show");
         }
     }
-    
-    
+
 }

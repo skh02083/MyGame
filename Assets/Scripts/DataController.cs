@@ -46,6 +46,8 @@ public class DataController : MonoBehaviour {
     // 모든 시나리오 내용을 담기 위해 ScenarioItem 리스트 선언
     public List<ScenarioItem> NormalScenarioList;
     public List<ScenarioItem> SpecialScenarioList;
+
+    public Dictionary<int, ScenarioItem> ScenarioDic;
     
     public bool MetaDataLoaded = false;
 
@@ -54,8 +56,7 @@ public class DataController : MonoBehaviour {
     {
         GameScenario = new List<ScenarioItem>();
 
-        LoadScenario("GameNormalQuestion");
-        LoadScenario("GameSpecialQuestion");
+        LoadScenario();
 
         MetaDataLoaded = true;
     }
@@ -64,8 +65,8 @@ public class DataController : MonoBehaviour {
     public ScenarioItem CurrentScenarioItem;
 
     // csv파일에서 데이터 가져오기
-    public void LoadScenario(string ScenarioFileName){
-		TextAsset scenarioText = Resources.Load ("Scenario/" + ScenarioFileName) as TextAsset;
+    public void LoadScenario(){
+        TextAsset scenarioText = Resources.Load ("Scenario/GameNormalQuestion") as TextAsset;
         /*파일 종류
          * - GameNormalQuestion : 일반 질문
          * - GameSpecialQuestion : 특별 질문
@@ -76,31 +77,23 @@ public class DataController : MonoBehaviour {
 		int lineNum = 0;
 
         // 시나리오리스트 객체 생성
-        if(ScenarioFileName == "GameNormalQuestion")
-        {
-            NormalScenarioList = new List<ScenarioItem>();
-        }
-
-        if(ScenarioFileName == "GameSpecialQuestion")
-        {
-            SpecialScenarioList = new List<ScenarioItem>();
-        }
+        NormalScenarioList = new List<ScenarioItem>();
+        SpecialScenarioList = new List<ScenarioItem>();
+        ScenarioDic = new Dictionary<int, ScenarioItem>();
 
 
-
-		foreach (string line in list) {
+        
+        foreach (string line in list) {
             lineNum++;
 			if (lineNum == 1) // 표의 맨 윗줄에 해당하는 첫번째 줄은 건너뛴다.
 				continue;
             // 콤마를 기준으로 문자열을 쪼갠다.
 			string[] values = line.Split (',');
-            
-            // 자료수 검사
-            if (ScenarioFileName == "GameNormalQuestion" && values.Length != 32)
-				continue;
-            if (ScenarioFileName == "GameSpecialQuestion" && values.Length != 32)
-                continue;
 
+            // 자료수 검사
+            if (values.Length != 22)
+				continue;
+            
             ScenarioItem Item = null;
             
             Item = new ScenarioItem();
@@ -111,74 +104,50 @@ public class DataController : MonoBehaviour {
             Item.Question = values[3];
 
             Item.Answer1 = values[4];
-            Item.Money1 = int.Parse(values[5]);
-            Item.Approval1 = int.Parse(values[6]);
-            Item.Power1 = int.Parse(values[7]);
-            Item.North1 = int.Parse(values[8]);
-            Item.USA1 = int.Parse(values[9]);
-            Item.China1 = int.Parse(values[10]);
-            Item.Japan1 = int.Parse(values[11]);
-            Item.OtherNation1 = int.Parse(values[12]);
-            Item.Economy1 = int.Parse(values[13]);
-            Item.Army1 = int.Parse(values[14]);
-            Item.Moral1 = int.Parse(values[15]);
-            Item.News1 = values[16];
-            Item.Next1 = int.Parse(values[17]);
+            Item.Approval1 = int.Parse(values[5]);
+            Item.Welfare1 = int.Parse(values[6]);
+            Item.Economy1 = int.Parse(values[7]);
+            Item.Diplomacy1 = int.Parse(values[8]);
+            Item.Army1 = int.Parse(values[9]);
+            Item.Moral1 = int.Parse(values[10]);
+            Item.Power1 = int.Parse(values[11]);
+            Item.Next1 = int.Parse(values[12]);
 
-            Item.Answer2 = values[18];
-            Item.Money2 = int.Parse(values[19]);
-            Item.Approval2 = int.Parse(values[20]);
-            Item.Power2 = int.Parse(values[21]);
-            Item.North2 = int.Parse(values[22]);
-            Item.USA2 = int.Parse(values[23]);
-            Item.China2 = int.Parse(values[24]);
-            Item.Japan2 = int.Parse(values[25]);
-            Item.OtherNation2 = int.Parse(values[26]);
-            Item.Economy2 = int.Parse(values[27]);
-            Item.Army2 = int.Parse(values[28]);
-            Item.Moral2 = int.Parse(values[29]);
-            Item.News2 = values[30];
-            Item.Next2 = int.Parse(values[31]);
+            Item.Answer2 = values[13];
+            Item.Approval2 = int.Parse(values[14]);
+            Item.Welfare2 = int.Parse(values[15]);
+            Item.Economy2 = int.Parse(values[16]);
+            Item.Diplomacy2 = int.Parse(values[17]);
+            Item.Army2 = int.Parse(values[18]);
+            Item.Moral2 = int.Parse(values[19]);
+            Item.Power2 = int.Parse(values[20]);
+            Item.Next2 = int.Parse(values[21]);
 
                 // 불러온 값을 시나리오리스트에 추가
-                
-            if(ScenarioFileName == "GameNormalQuestion")
+            if(Item.Type == "N")
             {
                 NormalScenarioList.Add(Item);
-                
-            }
 
-            if (ScenarioFileName == "GameSpecialQuestion")
+            }
+            else if(Item.Type == "S")
             {
                 SpecialScenarioList.Add(Item);
-                
-            }
 
-            //Debug.Log(line);
+            }
+            ScenarioDic.Add(Item.ID, Item);
+
         }
     }
 	
 
 	public List<ScenarioItem> GetNormalScenarioList(){
 
-		if (NormalScenarioList == null) {
-			LoadScenario ("GameNormalQuestion");
-		}
+        LoadScenario();
 
 		return NormalScenarioList;
 
 	}
-
-    public List<ScenarioItem> GetSpecialScenarioList()
-    {
-        if (SpecialScenarioList == null) {
-            LoadScenario("GameSpecialQuestion");
-        }
-
-        return SpecialScenarioList;
-    }
-
-
+    
     public List<ScenarioItem> GameScenario;
 
     public void NormalRandom(int number)
@@ -193,16 +162,9 @@ public class DataController : MonoBehaviour {
 
     public void SpecialFinder(int QuestionID)
     {
-        int IDFinder = 0;
-        for (int index = 0; index < SpecialScenarioList.Count - 1; index++)
-        {
-            if (SpecialScenarioList[index].ID == QuestionID)
-            {
-                IDFinder = index;
-                break;
-            }
-        }
-        GameScenario.Add(SpecialScenarioList[IDFinder]);
+        //Debug.Log(IDFinder);
+        ScenarioItem item = ScenarioDic[QuestionID];
+        GameScenario.Add(item);
         //Debug.Log(SpecialScenarioList[IDFinder].Question);
     }
 
@@ -210,9 +172,9 @@ public class DataController : MonoBehaviour {
     public List<ScenarioItem> GetGameScenario()
     {
         NormalRandom(5);
-        SpecialFinder(1);
+        //SpecialFinder(11);
         NormalRandom(5);
-        SpecialFinder(4);
+        //SpecialFinder(14);
         return GameScenario;
     }
 
@@ -242,10 +204,16 @@ public class DataController : MonoBehaviour {
             Debug.Log("Create new");
 
             _gameData = new GameData();
-            //_gameData.CollectGoldLevel = 1;
-            
 
-        }
+            _gameData.ScenarioNum = 0;
+            _gameData.Approval = 50;
+            _gameData.Welfare = 50;
+            _gameData.Economy = 50;
+            _gameData.Diplomacy = 50;
+            _gameData.Army = 50;
+            _gameData.Moral = 50;
+
+}
     }
 
     public void SaveGameData()
@@ -255,6 +223,5 @@ public class DataController : MonoBehaviour {
 
         string filePath = Application.persistentDataPath + gameDataProjectFilePath;
         File.WriteAllText(filePath, dataAsJson);
-
     }
 }
