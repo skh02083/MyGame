@@ -7,11 +7,6 @@ using UnityEngine.Advertisements;
 
 public class GameController : MonoBehaviour {
 
-#if UNITY_IOS
-	private string gameId = "1547779";
-#elif UNITY_ANDROID
-    private string gameId = "1547778";
-#endif
 
     public Text Question;
     public Text AnswerText1;
@@ -29,20 +24,14 @@ public class GameController : MonoBehaviour {
     bool specialChecker = false;
 
     // Use this for initialization
-    IEnumerator Start () {
+    void Start () {
 		UpdateStat ();
         GameOverCanvas.SetActive(false);
-        Debug.Log("Load Done");
-        while (DataController.Instance.gameData == null || DataController.Instance.MetaDataLoaded == false) {
-            yield return new WaitForSecondsRealtime(0.1f);
-        } // metaData가 로드 되기 전까지 대기한다. 
+        //Debug.Log("Load Done");
         
         LoadQuestion (0, ref DataController.Instance.gameData.ScenarioNum);
 
-        if (Advertisement.isSupported)
-        {
-            Advertisement.Initialize(gameId);
-        }
+
     }
 	
 	
