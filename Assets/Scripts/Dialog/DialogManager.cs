@@ -6,8 +6,7 @@ public enum DialogType
 {
 	Alert,
 	Confirm,
-	Ranking,
-    Budget
+	Ranking
 }
 
 public sealed class DialogManager

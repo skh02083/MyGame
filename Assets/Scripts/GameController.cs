@@ -22,6 +22,8 @@ public class GameController : MonoBehaviour {
     public GameObject GameOverCanvas;
 
     bool specialChecker = false;
+    //int monthlength = 30;
+    //int NumMonth = 12;
 
     // Use this for initialization
     void Start () {
