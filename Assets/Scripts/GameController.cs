@@ -24,13 +24,14 @@ public class GameController : MonoBehaviour {
     public Button Answer1, Answer2;
     public Text ShowCharacter;
     public Text Timer;
+    public GameObject GameOverCanvas;
 
-    
+    bool specialChecker = false;
 
     // Use this for initialization
     IEnumerator Start () {
 		UpdateStat ();
-
+        GameOverCanvas.SetActive(false);
         Debug.Log("Load Done");
         while (DataController.Instance.gameData == null || DataController.Instance.MetaDataLoaded == false) {
             yield return new WaitForSecondsRealtime(0.1f);
@@ -49,8 +50,12 @@ public class GameController : MonoBehaviour {
     // Update is called once per frame
 	void Update () {
         if (Input.GetKeyDown(KeyCode.Escape))
+        {
             ShowRewardedVideo();
             Application.Quit();
+        }
+
+        GameOver();
     }
 
     // 화면의 텍스트에 표시되도록 연결
@@ -100,7 +105,11 @@ public class GameController : MonoBehaviour {
         {
             if (list[DataController.Instance.gameData.ScenarioNum].Next1 == 0)
             {
-                DataController.Instance.gameData.ScenarioNum++;
+                if(specialChecker == false)
+                {
+                    DataController.Instance.gameData.ScenarioNum++;
+                }
+                specialChecker = false;
                 DataController.Instance.CurrentScenarioItem = list[DataController.Instance.gameData.ScenarioNum];
                 
             } else
@@ -109,6 +118,7 @@ public class GameController : MonoBehaviour {
                 Debug.Log(NextID);
                 DataController.Instance.CurrentScenarioItem = DataController.Instance.ScenarioDic[NextID];
                 DataController.Instance.gameData.ScenarioNum++;
+                specialChecker = true;
             }
         }
 
@@ -116,7 +126,11 @@ public class GameController : MonoBehaviour {
         {
             if (list[DataController.Instance.gameData.ScenarioNum].Next2 == 0)
             {
-                DataController.Instance.gameData.ScenarioNum++;
+                if (specialChecker == false)
+                {
+                    DataController.Instance.gameData.ScenarioNum++;
+                }
+                specialChecker = false;
                 DataController.Instance.CurrentScenarioItem = list[DataController.Instance.gameData.ScenarioNum];
                 
             } else
@@ -125,6 +139,7 @@ public class GameController : MonoBehaviour {
                 Debug.Log(NextID);
                 DataController.Instance.CurrentScenarioItem = DataController.Instance.ScenarioDic[NextID];
                 DataController.Instance.gameData.ScenarioNum++;
+                specialChecker = true;
             }
         }
         ShowCharacter.text = DataController.Instance.CurrentScenarioItem.Character;
@@ -249,6 +264,21 @@ public class GameController : MonoBehaviour {
         else if (result == ShowResult.Failed)
         {
             Debug.LogError("Video failed to show");
+        }
+    }
+
+    public void GameOver()
+    {
+        if(DataController.Instance.gameData.Approval <= 0 
+            || DataController.Instance.gameData.Welfare <= 0 
+            || DataController.Instance.gameData.Economy <= 0 
+            || DataController.Instance.gameData.Diplomacy <= 0 
+            || DataController.Instance.gameData.Army <= 0)
+        {
+            GameOverCanvas.SetActive(true);
+        } else
+        {
+            GameOverCanvas.SetActive(false);
         }
     }
 

@@ -172,9 +172,9 @@ public class DataController : MonoBehaviour {
     public List<ScenarioItem> GetGameScenario()
     {
         NormalRandom(5);
-        //SpecialFinder(11);
+        SpecialFinder(1);
         NormalRandom(5);
-        //SpecialFinder(14);
+        SpecialFinder(1);
         return GameScenario;
     }
 
